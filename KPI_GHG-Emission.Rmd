@@ -71,7 +71,7 @@ library("tidyverse", warn.conflicts=FALSE)
 ## Source micro-services
 source("microservices/uS005_AbsEms_Corp.R")
 source("microservices/uS006_AbsEms_PrFin.R")
-source("microservices/uS007_AbsEms_PrEq.R")
+source("microservices/uS007_AbsEms_PrEq2.R")
 source("microservices/uS008_AbsEms_FI.R")
 
 ## Setup locations in data lake
@@ -247,10 +247,16 @@ custG <- read.csv2(fname_in_custG, stringsAsFactors = FALSE,
 custG <- custG[custG$IC_Type == "private equity fund",]
 lutICS <- read.csv2(fname_in_lutICS, stringsAsFactors = FALSE,
                    fileEncoding = "UTF-8", check.names = FALSE)
-PEFConsEC1fctrs <- read.csv2(fname_in_PEFConsEC1fctrs, 
+PEFConsECF <- read.csv2(fname_in_PEFConsEC1fctrs, 
                            stringsAsFactors = FALSE, fileEncoding = "UTF-8",
                            check.names = FALSE)
-PEFConsPKfctrs <- read.csv2(fname_in_PEFConsPKfctrs, 
+PEFConsPKF <- read.csv2(fname_in_PEFConsPKfctrs, 
+                           stringsAsFactors = FALSE, fileEncoding = "UTF-8",
+                           check.names = FALSE)
+EcEF <- read.csv2(fname_in_EcEF1, 
+                           stringsAsFactors = FALSE, fileEncoding = "UTF-8",
+                           check.names = FALSE)
+CpIF <- read.csv2(fname_in_CpIF, 
                            stringsAsFactors = FALSE, fileEncoding = "UTF-8",
                            check.names = FALSE)
 PEFConsSize <- read.csv2(fname_in_PEFConsSize, 
@@ -260,13 +266,15 @@ PEFConsSctrs <- read.csv2(fname_in_PEFConsSctrs,
                            stringsAsFactors = FALSE, fileEncoding = "UTF-8",
                            check.names = FALSE)
 
-AE_PrEq1 <- uS007_AbsEms_PrEq(customers = custG,
-                            ecfactors = PEFConsEC1fctrs,
-                            pkfactors = PEFConsPKfctrs,
+AE_PrEq1 <- uS007_AbsEms_PrEq2(customers = custG,
+                            c_ecfactors = PEFConsECF,
+                            c_pkfactors = PEFConsPKF,
+                            ECF = EcEF,
+                            PKF = CpIF,
                             sizes = PEFConsSize,
                             sectors = PEFConsSctrs,
-                            costPK_msme = 1.2,
-                            costPK_corp = 0.73,
+                            costPK_msme = 1.19852941176471,
+                            costPK_corp = 0.727941176470588,
                             sectormap = lutICS)
 
 write.csv2(AE_PrEq1, file = fname_out_AE_PrEq1, row.names = FALSE,
@@ -282,20 +290,25 @@ Calculate absolute emissions (scope 2) for each Private Equity Fund customer.
 PEFConsEC2fctrs <- read.csv2(fname_in_PEFConsEC2fctrs, 
                            stringsAsFactors = FALSE, fileEncoding = "UTF-8",
                            check.names = FALSE)
+EcEF <- read.csv2(fname_in_EcEF2, 
+                           stringsAsFactors = FALSE, fileEncoding = "UTF-8",
+                           check.names = FALSE)
 
-AE_PrEq2 <- uS007_AbsEms_PrEq(customers = custG,
-                            ecfactors = PEFConsEC2fctrs,
-                            pkfactors = PEFConsPKfctrs,
+AE_PrEq2 <- uS007_AbsEms_PrEq2(customers = custG,
+                            c_ecfactors = PEFConsECF,
+                            c_pkfactors = PEFConsPKF,
+                            ECF = EcEF,
+                            PKF = CpIF,
                             sizes = PEFConsSize,
                             sectors = PEFConsSctrs,
-                            costPK_msme = 1.2,
-                            costPK_corp = 0.73,
+                            costPK_msme = 1.19852941176471,
+                            costPK_corp = 0.727941176470588,
                             sectormap = lutICS)
 
 write.csv2(AE_PrEq2, file = fname_out_AE_PrEq1, row.names = FALSE,
            fileEncoding = "UTF-8")
 
-head(AE_PrEq1, 5)
+head(AE_PrEq2, 5)
 ```
 
 ### Financial Institutions (scope 1)
@@ -317,19 +330,19 @@ lutICS <- read.csv2(fname_in_lutICS, stringsAsFactors = FALSE,
 lutC <- read.csv2(fname_in_lutC, stringsAsFactors = FALSE,
                                      fileEncoding = "UTF-8", check.names = FALSE)
 
-AE_FI1 <- uS008_AbsEms_FI(customers = custG,
-                            ecfactors = EcEF,
-                            pkfactors = CpIF,
-                            impactcard = ICFI,
-                            costPK_msme = 1.2,
-                            costPK_corp = 0.73,
-                            countrymap = lutC,
-                            sectormap = lutICS)
+# AE_FI1 <- uS008_AbsEms_FI(customers = custG,
+#                            ecfactors = EcEF,
+#                            pkfactors = CpIF,
+#                            impactcard = ICFI,
+#                            costPK_msme = 1.19852941176471,
+#                            costPK_corp = 0.727941176470588,
+#                            countrymap = lutC,
+#                            sectormap = lutICS)
 
-write.csv2(AE_FI1, file = fname_out_AE_FI1, row.names = FALSE,
-           fileEncoding = "UTF-8")
+#write.csv2(AE_FI1, file = fname_out_AE_FI1, row.names = FALSE,
+#           fileEncoding = "UTF-8")
 
-head(AE_FI1, 5)
+#head(AE_FI1, 5)
 ```
 
 ### Financial Institutions (scope 2)
@@ -343,19 +356,19 @@ custG <- custG[custG$IC_type == "financial institution",]
 EcEF <- read.csv2(fname_in_EcEF2, stringsAsFactors = FALSE,
                                   fileEncoding = "UTF-8", check.names = FALSE)
 
-AE_FI2 <- uS008_AbsEms_FI(customers = custG,
-                            ecfactors = EcEF,
-                            pkfactors = CpIF,
-                            impactcard = ICFI,
-                            costPK_msme = 1.2,
-                            costPK_corp = 0.73,
-                            countrymap = lutC,
-                            sectormap = lutICS)
+#AE_FI2 <- uS008_AbsEms_FI(customers = custG,
+#                            ecfactors = EcEF,
+#                            pkfactors = CpIF,
+#                            impactcard = ICFI,
+#                            costPK_msme = 1.19852941176471,
+#                            costPK_corp = 0.727941176470588,
+#                            countrymap = lutC,
+#                            sectormap = lutICS)
 
-write.csv2(AE_FI2, file = fname_out_AE_FI2, row.names = FALSE,
-           fileEncoding = "UTF-8")
+#write.csv2(AE_FI2, file = fname_out_AE_FI2, row.names = FALSE,
+#           fileEncoding = "UTF-8")
 
-head(AE_FI2, 5)
+#head(AE_FI2, 5)
 ```
 
 ## Results
@@ -369,14 +382,14 @@ custG <- read.csv2(fname_in_custG, stringsAsFactors = FALSE,
 
 colnames(AE_Corp1) <- paste0(colnames(AE_Corp1),"_1")
 colnames(AE_Corp2) <- paste0(colnames(AE_Corp2),"_2")
-colnames(AE_FI1) <- paste0(colnames(AE_FI1),"_1")
-colnames(AE_FI2) <- paste0(colnames(AE_FI2),"_2")
+#colnames(AE_FI1) <- paste0(colnames(AE_FI1),"_1")
+#colnames(AE_FI2) <- paste0(colnames(AE_FI2),"_2")
 colnames(AE_PrEq1) <- paste0(colnames(AE_PrEq1),"_1")
 colnames(AE_PrEq2) <- paste0(colnames(AE_PrEq2),"_2")
 colnames(AE_PrFin1) <- paste0(colnames(AE_PrFin1),"_1")
 colnames(AE_PrFin2) <- paste0(colnames(AE_PrFin2),"_2")
 AE <- rbind(cbind(AE_Corp1, AE_Corp2),
-            cbind(AE_FI1, AE_FI2),
+#            cbind(AE_FI1, AE_FI2),
             cbind(AE_PrEq1, AE_PrEq2),
             cbind(AE_PrFin1, AE_PrFin2))
 AE <- select(AE, c(1,2,5,6))

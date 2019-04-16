@@ -75,23 +75,23 @@ alw20$Year <- as.numeric(alw20$Year)
 
 ## 3 - shift means to 3.38 per 2018 by using a factor
 ##     to simulate a sum with a confidence interval
-oldmean <- mean(AE$Ems, na.rm = TRUE)
-newtot <- 3.37862339163655
-shift <- newtot/oldmean
-AEs <- mutate(AE, Ems = Ems * shift)
+# oldmean <- mean(AE$Ems, na.rm = TRUE)
+# newtot <- 3.37862339163655
+# shift <- newtot/oldmean
+# AEs <- mutate(AE, Ems = Ems * shift)
 
 ## 4 - generate emissions previous years, considering (1.5C pathway): 
-perc <- 1.5
-peru <- perc/100
-sdev <- abs(peru)
-AEyr <- AEs %>%
-  select(Ems) %>%
-  rename(Yr_2018 = Ems) %>%
-  mutate(Yr_2017 = (Yr_2018 * (1 + rnorm(1, mean=peru, sd=sdev)))) %>%
-  mutate(Yr_2016 = (Yr_2017 * (1 + rnorm(1, mean=peru, sd=sdev)))) %>%
-  mutate(Yr_2015 = (Yr_2016 * (1 + rnorm(1, mean=peru, sd=sdev))))
-check_4 <- round(100-(sum(AEyr$Yr_2015)/sum(AEyr$Yr_2018)*100), 2)
-check_4
+# perc <- 1.5
+# peru <- perc/100
+# sdev <- abs(peru)
+# AEyr <- AEs %>%
+#   select(Ems) %>%
+#   rename(Yr_2018 = Ems) %>%
+#   mutate(Yr_2017 = (Yr_2018 * (1 + rnorm(1, mean=peru, sd=sdev)))) %>%
+#   mutate(Yr_2016 = (Yr_2017 * (1 + rnorm(1, mean=peru, sd=sdev)))) %>%
+#   mutate(Yr_2015 = (Yr_2016 * (1 + rnorm(1, mean=peru, sd=sdev))))
+# check_4 <- round(100-(sum(AEyr$Yr_2015)/sum(AEyr$Yr_2018)*100), 2)
+# check_4
 
 ## 5 - gathering the resulting emissions
 AEg <- AEyr
